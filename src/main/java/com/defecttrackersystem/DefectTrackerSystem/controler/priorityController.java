@@ -2,15 +2,20 @@ package com.defecttrackersystem.DefectTrackerSystem.controler;
 
 import com.defecttrackersystem.DefectTrackerSystem.common.response.BaseResponse;
 import com.defecttrackersystem.DefectTrackerSystem.common.response.ContentResponse;
+import com.defecttrackersystem.DefectTrackerSystem.common.response.PaginatedContentResponse;
 import com.defecttrackersystem.DefectTrackerSystem.request.dto.PriorityRequest;
 import com.defecttrackersystem.DefectTrackerSystem.response.dto.PriorityResponse;
 import com.defecttrackersystem.DefectTrackerSystem.rest.enums.RequestStatus;
+import com.defecttrackersystem.DefectTrackerSystem.search.dto.PrioritySearch;
 import com.defecttrackersystem.DefectTrackerSystem.service.PriorityService;
 import com.defecttrackersystem.DefectTrackerSystem.utils.Constants;
 import com.defecttrackersystem.DefectTrackerSystem.utils.EndpointURI;
 import com.defecttrackersystem.DefectTrackerSystem.utils.ValidationFailureResponseCode;
 import lombok.extern.java.Log;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -106,5 +111,25 @@ public class priorityController {
                 validationFailureResponseCode.getCommonSuccessCode(),
                 validationFailureResponseCode.getDeletePrioritySuccessMessage()));
     }
+    @GetMapping(value = EndpointURI.PRIORITY_SEARCH_AND_PAGINATION)
+    public ResponseEntity<Object> multiSearchPriority(
+            @RequestParam(name = "page", defaultValue = "0") int page,
+            @RequestParam(name = "size", defaultValue = "10") int size,
+            @RequestParam(name = "direction", defaultValue = "ASC") String direction,
+            @RequestParam(name = "sortField", defaultValue = "id") String sortField,
+            PrioritySearch prioritySearch
+    ) {
+        Pageable pageable = PageRequest.of(page, size, Sort.Direction.fromString(direction), sortField);
+        PaginatedContentResponse.Pagination pagination = new PaginatedContentResponse.Pagination(page,size,0,0l);
+        return ResponseEntity.ok(new PaginatedContentResponse<>(
+                Constants.PRIORITIES,
+                priorityService.multiSearchPriority(pageable, pagination, prioritySearch),
+                RequestStatus.SUCCESS.getStatus(),
+                validationFailureResponseCode.getCommonSuccessCode(),
+                validationFailureResponseCode.getSearchAndPaginationPrioritySuccessMessage(),
+                pagination)
+        );
+    }
+
 
 }

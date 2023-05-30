@@ -45,4 +45,7 @@ public class ValidationFailureResponseCode {
 
     @Value("${message.success.update.priority}")
     private String updatePrioritySuccessMessage;
+
+    @Value("${message.success.searchAndPagination.priority}")
+    private String searchAndPaginationPrioritySuccessMessage;
 }
