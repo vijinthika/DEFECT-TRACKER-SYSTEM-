@@ -11,7 +11,7 @@ import javax.persistence.Id;
 @Entity
 @Setter
 @Getter
-public class Priority {
+public class Seviarity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
